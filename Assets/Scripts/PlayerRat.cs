@@ -10,21 +10,25 @@ public class PlayerRat : MonoBehaviour
     private Vector2 moveDirection;
 
     [SerializeField] private float moveSpeed = 2f;
-    [SerializeField] private int fullness = 100;
+    [SerializeField] private int maxFullness = 100;
+    [SerializeField] private int currentFullness;
 
     public GameObject gameOverTitle;
+    public BarScript bar;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
 
+        bar.SetMaxValue(maxFullness);
+        currentFullness = maxFullness;
         StartCoroutine("Hunger");
     }
 
     void Update()
     {
-        if(fullness <= 0)
+        if(currentFullness <= 0)
         {
             gameOverTitle.SetActive(true);
             this.gameObject.SetActive(false);
@@ -60,8 +64,16 @@ public class PlayerRat : MonoBehaviour
     {
         if (other.CompareTag("Food"))
         {
-            fullness += 25;
+            currentFullness += 25;
+            if (currentFullness >100)
+                currentFullness = maxFullness;
             other.gameObject.SetActive(false);
+        }
+        if (other.CompareTag("Nest"))
+        {
+            currentFullness -= 20;
+            bar.SetValue(currentFullness);
+            other.gameObject.GetComponent<NestScript>().Feed();
         }
     }
 
@@ -69,7 +81,8 @@ public class PlayerRat : MonoBehaviour
     {
         while (true)
         {
-            fullness -= 1;
+            currentFullness -= 1;
+            bar.SetValue(currentFullness);
             yield return new WaitForSeconds(1f);
         }
     }
