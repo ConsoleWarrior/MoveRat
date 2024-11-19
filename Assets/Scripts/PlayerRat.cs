@@ -4,60 +4,64 @@ using UnityEngine;
 
 public class PlayerRat : MonoBehaviour
 {
-    private Rigidbody2D rb;
-    
+    //private Rigidbody2D rb;
+
     private Animator animator;
     private Vector2 moveDirection;
 
-    [SerializeField] private float moveSpeed = 2f;
-    [SerializeField] private int maxFullness = 100;
+    [SerializeField] private float currentSpeed;
+    [SerializeField] private float sprintSpeed;
+    [SerializeField] private float walkSpeed;
+
+
+    [SerializeField] private int maxFullness;
     [SerializeField] private int currentFullness;
+    [SerializeField] private int thirst;
 
     public GameObject gameOverTitle;
     public BarScript bar;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        //rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
 
         bar.SetMaxValue(maxFullness);
-        currentFullness = maxFullness;
         StartCoroutine("Hunger");
     }
 
     void Update()
     {
-        if(currentFullness <= 0)
+        if (currentFullness <= 0)
         {
             gameOverTitle.SetActive(true);
             this.gameObject.SetActive(false);
         }
-        
-        
-        
+        Sprint();
+
+
         moveDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        animator.SetFloat("Speed", Mathf.Abs(moveDirection.x * moveSpeed));
-        animator.SetFloat("SpeedV", moveDirection.y * moveSpeed);
+        animator.SetFloat("Speed", Mathf.Abs(moveDirection.x * currentSpeed));
+        animator.SetFloat("SpeedV", moveDirection.y * currentSpeed);
         bool flipped = moveDirection.x < 0;
         //bool flipHorizontal = moveDirection.x < 0;
         //bool flipVertical = moveDirection.y < 0;
-        this.transform.rotation = Quaternion.Euler(new Vector3(0f, flipped ? 180f: 0f, 0f));
+        this.transform.rotation = Quaternion.Euler(new Vector3(0f, flipped ? 180f : 0f, 0f));
     }
 
     void FixedUpdate()
     {
         if (moveDirection != Vector2.zero)
         {
-            var xMove = moveDirection.x * moveSpeed * Time.deltaTime;
-            var xMoveVertical = moveDirection.y * moveSpeed * Time.deltaTime;
+            var xMove = moveDirection.x * currentSpeed * Time.deltaTime;
+            var xMoveVertical = moveDirection.y * currentSpeed * Time.deltaTime;
 
             if (xMoveVertical != 0 && xMove != 0)
-                this.transform.Translate(new Vector3(xMove, xMoveVertical)*0.75f, Space.World);
+                this.transform.Translate(new Vector3(xMove, xMoveVertical) * 0.75f, Space.World);
             else
-            this.transform.Translate(new Vector3(xMove, xMoveVertical),Space.World);
+                this.transform.Translate(new Vector3(xMove, xMoveVertical), Space.World);
         }
-        //rb.velocity = moveDirection * moveSpeed;
+        //rb.velocity = moveDirection * realSpeed;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -65,8 +69,9 @@ public class PlayerRat : MonoBehaviour
         if (other.CompareTag("Food"))
         {
             currentFullness += 25;
-            if (currentFullness >100)
+            if (currentFullness > 100)
                 currentFullness = maxFullness;
+            bar.SetValue(currentFullness);
             other.gameObject.SetActive(false);
         }
         if (other.CompareTag("Nest"))
@@ -81,9 +86,23 @@ public class PlayerRat : MonoBehaviour
     {
         while (true)
         {
-            currentFullness -= 1;
+            currentFullness -= thirst;
             bar.SetValue(currentFullness);
             yield return new WaitForSeconds(1f);
+        }
+    }
+
+    private void Sprint()
+    {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            currentSpeed = sprintSpeed;
+            thirst = 3;
+        }
+        else
+        {
+            currentSpeed = walkSpeed;
+            thirst = 1;
         }
     }
 }
