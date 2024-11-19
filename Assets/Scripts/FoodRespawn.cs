@@ -5,6 +5,7 @@ using UnityEngine;
 public class FoodRespawn : MonoBehaviour
 {
     private List<GameObject> foods = new List<GameObject>();
+
     void Start()
     {
         StartCoroutine("CheckChild");
@@ -14,7 +15,7 @@ public class FoodRespawn : MonoBehaviour
     {
         while (true)
         {
-            foreach(Transform child in transform)
+            foreach (Transform child in transform)
             {
                 if (!foods.Contains(child.gameObject) && child.gameObject.activeSelf == false)
                 {
@@ -27,8 +28,8 @@ public class FoodRespawn : MonoBehaviour
     }
     IEnumerator RespawnChild(GameObject obj)
     {
-        yield return new WaitForSeconds(60f);
-        
+        yield return new WaitForSeconds(120f);
+
         obj.SetActive(true);
         foods.Remove(obj);
     }

@@ -6,6 +6,8 @@ public class NestScript : MonoBehaviour
 {
     [SerializeField] private int maxFullness;
     [SerializeField] private int currentFullness;
+    [SerializeField] private int thirst;
+
     public BarScript bar;
     public GameObject gameOverTitle;
     public GameObject win;
@@ -14,7 +16,6 @@ public class NestScript : MonoBehaviour
     void Start()
     {
         bar.SetMaxValue(maxFullness);
-        //currentFullness = 100;
         StartCoroutine("Hunger");
     }
 
@@ -32,9 +33,9 @@ public class NestScript : MonoBehaviour
     {
         while (true)
         {
-            currentFullness -= 1;
+            currentFullness -= thirst;
             bar.SetValue(currentFullness);
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(2f);
         }
     }
 
@@ -47,7 +48,6 @@ public class NestScript : MonoBehaviour
             win.SetActive(true);
             StopAllCoroutines();
         }
-        //currentFullness = maxFullness;
         bar.SetValue(currentFullness);
     }
 }

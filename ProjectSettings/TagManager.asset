@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Food
   - Nest
+  - Enemy
   layers:
   - Default
   - TransparentFX
