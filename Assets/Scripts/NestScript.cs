@@ -12,6 +12,7 @@ public class NestScript : MonoBehaviour
     public GameObject gameOverTitle;
     public GameObject win;
     public GameObject player;
+    public GameObject clue;
 
     void Start()
     {
@@ -27,6 +28,8 @@ public class NestScript : MonoBehaviour
             player.SetActive(false);
             StopAllCoroutines();
         }
+        if(!player.activeSelf && Input.GetKeyDown(KeyCode.E))
+        { player.SetActive(true); }
     }
 
     IEnumerator Hunger()
@@ -49,5 +52,20 @@ public class NestScript : MonoBehaviour
             StopAllCoroutines();
         }
         bar.SetValue(currentFullness);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.CompareTag("Player"))
+        {
+            clue.SetActive(true);
+        }
+    }
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            clue.SetActive(false);
+        }
     }
 }

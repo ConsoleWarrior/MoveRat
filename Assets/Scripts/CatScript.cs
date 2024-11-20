@@ -15,7 +15,10 @@ public class CatScript : MonoBehaviour
     private Vector2 randomDirection;
 
     //private Rigidbody2D rb;
-
+    private Vector2[] vectors = { new Vector2(0, 50),
+    new Vector2(0,-50),new Vector2(50,0),new Vector2(-50,0),
+    new Vector2(50,50),new Vector2(-50,-50),new Vector2(-50,50),
+    new Vector2(50,-50)};
 
     public GameObject gameOverTitle;
     public GameObject player;
@@ -33,19 +36,7 @@ public class CatScript : MonoBehaviour
 
     void FixedUpdate()
     {
-        //if (moveDirection != Vector2.zero)
-        //{
-        //    var xMove = moveDirection.x * currentSpeed * Time.deltaTime;
-        //    var xMoveVertical = moveDirection.y * currentSpeed * Time.deltaTime;
-
-        //    if (xMoveVertical != 0 && xMove != 0)
-        //        this.transform.Translate(new Vector3(xMove, xMoveVertical) * 0.75f, Space.World);
-        //    else
-        //        this.transform.Translate(new Vector3(xMove, xMoveVertical), Space.World);
-        //}
-        //rb.velocity = moveDirection * walkSpeed;
-        //var heading = player.transform.position - transform.position;
-        if (moveDirection.sqrMagnitude < maxRange * maxRange)
+        if (moveDirection.sqrMagnitude < maxRange * maxRange && player.activeSelf)
         {
             currentSpeed = sprintSpeed;
             transform.position = Vector2.MoveTowards(transform.position, player.transform.position, currentSpeed * Time.deltaTime);
@@ -55,8 +46,6 @@ public class CatScript : MonoBehaviour
             currentSpeed = walkSpeed;
             transform.position = Vector2.MoveTowards(transform.position, randomDirection, currentSpeed * Time.deltaTime);
         }
-        //transform.position = Vector2.MoveTowards(transform.position, randomDirection, currentSpeed * Time.deltaTime);
-        //transform.position = Vector2.MoveTowards(transform.position, player.transform.position, walkSpeed*Time.deltaTime);
         //transform.right = moveDirection;
     }
 
@@ -65,17 +54,21 @@ public class CatScript : MonoBehaviour
         int i = 0;
         while (true)
         {
-            if (i == 1)
+            if (i > 0 && player.activeSelf)
             {
+                randomDirection = transform.position;
+                yield return new WaitForSeconds(2f);
+
                 randomDirection = player.transform.position;
                 i = 0;
             }
             else
             {
-                randomDirection = new Vector2(Random.Range(-50, 50), Random.Range(-50, 50));
+                //randomDirection = new Vector2(Random.Range(-50, 50), Random.Range(-50, 50));
+                randomDirection = vectors[Random.Range(0, 8)];
                 i++;
             }
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(Random.Range(3, 6));
         }
     }
     private void OnTriggerEnter2D(Collider2D other)

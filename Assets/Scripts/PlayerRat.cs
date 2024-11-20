@@ -8,11 +8,12 @@ public class PlayerRat : MonoBehaviour
 
     private Animator animator;
     private Vector2 moveDirection;
+    private bool onNest = false;
+    private NestScript nest;
 
     [SerializeField] private float currentSpeed;
     [SerializeField] private float sprintSpeed;
     [SerializeField] private float walkSpeed;
-
 
     [SerializeField] private int maxFullness;
     [SerializeField] private int currentFullness;
@@ -27,6 +28,10 @@ public class PlayerRat : MonoBehaviour
         animator = GetComponent<Animator>();
 
         bar.SetMaxValue(maxFullness);
+        //StartCoroutine("Hunger");
+    }
+    void OnEnable()
+    {
         StartCoroutine("Hunger");
     }
 
@@ -38,7 +43,19 @@ public class PlayerRat : MonoBehaviour
             this.gameObject.SetActive(false);
         }
         Sprint();
-
+        if (onNest)
+        {
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                currentFullness -= 20;
+                bar.SetValue(currentFullness);
+                nest.Feed();
+            }
+            if(Input.GetKeyDown(KeyCode.E))
+            {
+                this.gameObject.SetActive(false);
+            }
+        }
 
         moveDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         animator.SetFloat("Speed", Mathf.Abs(moveDirection.x * currentSpeed));
@@ -76,11 +93,34 @@ public class PlayerRat : MonoBehaviour
         }
         if (other.CompareTag("Nest"))
         {
-            currentFullness -= 20;
-            bar.SetValue(currentFullness);
-            other.gameObject.GetComponent<NestScript>().Feed();
+            onNest = true;
+            nest = other.gameObject.GetComponent<NestScript>();
+            //currentFullness -= 20;
+            //bar.SetValue(currentFullness);
+            //other.gameObject.GetComponent<NestScript>().Feed();
         }
     }
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Nest"))
+        {
+            onNest = false;
+        }
+    }
+    //private void OnTriggerStay2D(Collider2D other)
+    //{
+    //    if (other.CompareTag("Nest"))
+    //    {
+    //        Debug.Log("bef");
+    //        if (Input.GetKeyDown(KeyCode.F))
+    //        {
+    //            Debug.Log("f");
+    //            currentFullness -= 20;
+    //            bar.SetValue(currentFullness);
+    //            other.gameObject.GetComponent<NestScript>().Feed();
+    //        }
+    //    }
+    //}
 
     IEnumerator Hunger()
     {
