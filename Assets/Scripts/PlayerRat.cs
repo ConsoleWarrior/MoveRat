@@ -10,6 +10,7 @@ public class PlayerRat : MonoBehaviour
     private Vector2 moveDirection;
     private bool onNest = false;
     private NestScript nest;
+    private Animator holeAnim;
 
     [SerializeField] private float currentSpeed;
     [SerializeField] private float sprintSpeed;
@@ -51,10 +52,10 @@ public class PlayerRat : MonoBehaviour
                 bar.SetValue(currentFullness);
                 nest.Feed();
             }
-            if(Input.GetKeyDown(KeyCode.E))
-            {
-                this.gameObject.SetActive(false);
-            }
+            //if (Input.GetKeyDown(KeyCode.E))
+            //{
+            //    this.gameObject.SetActive(false);
+            //}
         }
 
         moveDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
@@ -64,6 +65,19 @@ public class PlayerRat : MonoBehaviour
         //bool flipHorizontal = moveDirection.x < 0;
         //bool flipVertical = moveDirection.y < 0;
         this.transform.rotation = Quaternion.Euler(new Vector3(0f, flipped ? 180f : 0f, 0f));
+    }
+    void OnGUI()
+    {
+        if (Event.current.Equals(Event.KeyboardEvent("e")))
+        {
+            Debug.Log("E");
+            if (onNest)
+            {
+                if (holeAnim != null)
+                    holeAnim.SetBool("Full", true);
+                this.gameObject.SetActive(false);
+            }
+        }
     }
 
     void FixedUpdate()
@@ -99,12 +113,21 @@ public class PlayerRat : MonoBehaviour
             //bar.SetValue(currentFullness);
             //other.gameObject.GetComponent<NestScript>().Feed();
         }
+        if (other.CompareTag("Hole"))
+        {
+            onNest = true;
+            holeAnim = other.gameObject.GetComponent<Animator>();
+            //nest = other.gameObject.GetComponent<NestScript>();
+            //currentFullness -= 20;
+            //bar.SetValue(currentFullness);
+            //other.gameObject.GetComponent<NestScript>().Feed();
+        }
     }
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Nest"))
+        if (other.CompareTag("Nest") || other.CompareTag("Hole"))
         {
-            onNest = false;
+            onNest = false; holeAnim = null;
         }
     }
     //private void OnTriggerStay2D(Collider2D other)

@@ -28,10 +28,23 @@ public class NestScript : MonoBehaviour
             player.SetActive(false);
             StopAllCoroutines();
         }
-        if(!player.activeSelf && Input.GetKeyDown(KeyCode.E))
-        { player.SetActive(true); }
+        //if (!player.activeSelf && Input.GetKeyDown(KeyCode.E))
+        //{ player.SetActive(true); }
+        //if (player.activeSelf && Input.GetKeyDown(KeyCode.E))
+        //{ player.SetActive(false); }
     }
+    void OnGUI()
+    {
+        if (Event.current.Equals(Event.KeyboardEvent("e")))
+        {
 
+            if (!player.activeSelf)
+            {
+                player.SetActive(true);
+                Debug.Log("E nest exit");
+            }
+        }
+    }
     IEnumerator Hunger()
     {
         while (true)
@@ -56,7 +69,7 @@ public class NestScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
             clue.SetActive(true);
         }
