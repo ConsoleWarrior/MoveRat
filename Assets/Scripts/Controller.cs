@@ -7,9 +7,11 @@ public class Controller : MonoBehaviour
     public GameObject player;
     public GameObject nest;
     private PlayerRat playerScript;
-    private Animator holeAnim;
+    public Animator holeAnim;
     public List<GameObject> areas = new List<GameObject>();
     private bool activeB = false;
+    public GameObject holes;
+    public Dubler dubler;
 
     void Start()
     {
@@ -50,6 +52,11 @@ public class Controller : MonoBehaviour
                 playerScript.Feeding();
                 Debug.Log("Feed 20");
             }
+            if (!player.activeSelf)
+            {
+                dubler.Eating();
+                Debug.Log("Eat 20");
+            }
         }
 
         if (Event.current.Equals(Event.KeyboardEvent("b")))
@@ -75,8 +82,19 @@ public class Controller : MonoBehaviour
         }
         if (Event.current.Equals(Event.KeyboardEvent("h")))
         {
-            if (activeB)
+            if (activeB && playerScript.onArea)
             {
+                foreach(Transform hole in holes.transform)
+                {
+                    if (!hole.gameObject.activeSelf)
+                    {
+                        hole.position = player.transform.position;
+                        hole.gameObject.SetActive(true);
+                        //hole.GetChild(0).gameObject.SetActive(true);
+                        break;
+                    }
+                }
+
                 //Instantiate(Resources.Load("Hole"), player.transform.position, Quaternion.identity);
             }
         }

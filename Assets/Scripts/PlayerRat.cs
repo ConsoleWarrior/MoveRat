@@ -9,6 +9,7 @@ public class PlayerRat : MonoBehaviour
     private Animator animator;
     private Vector2 moveDirection;
     public bool onNest = false;
+    public bool onArea = false;
 
 
     [SerializeField] private float currentSpeed;
@@ -16,13 +17,14 @@ public class PlayerRat : MonoBehaviour
     [SerializeField] private float walkSpeed;
 
     [SerializeField] private int maxFullness;
-    [SerializeField] private int currentFullness;
-    [SerializeField] private int thirst;
+    [SerializeField] public int currentFullness;
+    [SerializeField] public int thirst;
 
     public GameObject gameOverTitle;
     public BarScript bar;
     public NestScript nest;
     public Animator holeAnim;
+    public Dubler dubler;
 
     void Start()
     {
@@ -33,7 +35,13 @@ public class PlayerRat : MonoBehaviour
     }
     void OnEnable()
     {
-        StartCoroutine("Hunger");
+        dubler.Stop();
+        currentFullness = dubler.currentFullness;
+        StartCoroutine("HungerCoro");
+    }
+    void OnDisable()
+    {
+        dubler.CopyAndRun();
     }
 
     void Update()
@@ -87,19 +95,15 @@ public class PlayerRat : MonoBehaviour
         if (other.CompareTag("Nest"))
         {
             onNest = true;
-            //nest = other.gameObject.GetComponent<NestScript>();
-            //currentFullness -= 20;
-            //bar.SetValue(currentFullness);
-            //other.gameObject.GetComponent<NestScript>().Feed();
         }
         if (other.CompareTag("Hole"))
         {
             onNest = true;
             holeAnim = other.gameObject.GetComponent<Animator>();
-            //nest = other.gameObject.GetComponent<NestScript>();
-            //currentFullness -= 20;
-            //bar.SetValue(currentFullness);
-            //other.gameObject.GetComponent<NestScript>().Feed();
+        }
+        if (other.CompareTag("Area"))
+        {
+            onArea = true;
         }
     }
     private void OnTriggerExit2D(Collider2D other)
@@ -108,16 +112,25 @@ public class PlayerRat : MonoBehaviour
         {
             onNest = false; holeAnim = null;
         }
+        if (other.CompareTag("Area"))
+        {
+            onArea = false;
+        }
     }
 
-    IEnumerator Hunger()
+    IEnumerator HungerCoro()
     {
         while (true)
         {
-            currentFullness -= thirst;
-            bar.SetValue(currentFullness);
+            Hunger();
             yield return new WaitForSeconds(1f);
         }
+    }
+
+    public void Hunger()
+    {
+        currentFullness -= thirst;
+        bar.SetValue(currentFullness);
     }
 
     private void Sprint()

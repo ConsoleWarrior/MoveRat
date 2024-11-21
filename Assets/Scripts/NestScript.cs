@@ -13,6 +13,7 @@ public class NestScript : MonoBehaviour
     public GameObject win;
     public GameObject player;
     public GameObject clue;
+    public Controller controller;
 
     void Start()
     {
@@ -28,23 +29,20 @@ public class NestScript : MonoBehaviour
             player.SetActive(false);
             StopAllCoroutines();
         }
+
         //if (!player.activeSelf && Input.GetKeyDown(KeyCode.E))
         //{ player.SetActive(true); }
         //if (player.activeSelf && Input.GetKeyDown(KeyCode.E))
         //{ player.SetActive(false); }
     }
-    //void OnGUI()
-    //{
-    //    if (Event.current.Equals(Event.KeyboardEvent("e")))
-    //    {
-
-    //        if (!player.activeSelf)
-    //        {
-    //            player.SetActive(true);
-    //            Debug.Log("E nest exit");
-    //        }
-    //    }
-    //}
+    void OnMouseDown()
+    {
+        if (!player.activeSelf)
+        {
+            controller.holeAnim.SetBool("Full", false);
+            player.transform.position = transform.position;
+        }
+    }
     IEnumerator Hunger()
     {
         while (true)
@@ -64,6 +62,11 @@ public class NestScript : MonoBehaviour
             win.SetActive(true);
             StopAllCoroutines();
         }
+        bar.SetValue(currentFullness);
+    }
+    public void Eat()
+    {
+        currentFullness -= 20;
         bar.SetValue(currentFullness);
     }
 
