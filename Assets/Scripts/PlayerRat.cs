@@ -8,9 +8,8 @@ public class PlayerRat : MonoBehaviour
 
     private Animator animator;
     private Vector2 moveDirection;
-    private bool onNest = false;
-    private NestScript nest;
-    private Animator holeAnim;
+    public bool onNest = false;
+
 
     [SerializeField] private float currentSpeed;
     [SerializeField] private float sprintSpeed;
@@ -22,6 +21,8 @@ public class PlayerRat : MonoBehaviour
 
     public GameObject gameOverTitle;
     public BarScript bar;
+    public NestScript nest;
+    public Animator holeAnim;
 
     void Start()
     {
@@ -29,7 +30,6 @@ public class PlayerRat : MonoBehaviour
         animator = GetComponent<Animator>();
 
         bar.SetMaxValue(maxFullness);
-        //StartCoroutine("Hunger");
     }
     void OnEnable()
     {
@@ -44,40 +44,19 @@ public class PlayerRat : MonoBehaviour
             this.gameObject.SetActive(false);
         }
         Sprint();
-        if (onNest)
-        {
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                currentFullness -= 20;
-                bar.SetValue(currentFullness);
-                nest.Feed();
-            }
-            //if (Input.GetKeyDown(KeyCode.E))
-            //{
-            //    this.gameObject.SetActive(false);
-            //}
-        }
 
         moveDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         animator.SetFloat("Speed", Mathf.Abs(moveDirection.x * currentSpeed));
         animator.SetFloat("SpeedV", moveDirection.y * currentSpeed);
         bool flipped = moveDirection.x < 0;
-        //bool flipHorizontal = moveDirection.x < 0;
-        //bool flipVertical = moveDirection.y < 0;
         this.transform.rotation = Quaternion.Euler(new Vector3(0f, flipped ? 180f : 0f, 0f));
     }
-    void OnGUI()
+
+    public void Feeding()
     {
-        if (Event.current.Equals(Event.KeyboardEvent("e")))
-        {
-            Debug.Log("E");
-            if (onNest)
-            {
-                if (holeAnim != null)
-                    holeAnim.SetBool("Full", true);
-                this.gameObject.SetActive(false);
-            }
-        }
+        currentFullness -= 20;
+        bar.SetValue(currentFullness);
+        nest.Feed();
     }
 
     void FixedUpdate()
@@ -108,7 +87,7 @@ public class PlayerRat : MonoBehaviour
         if (other.CompareTag("Nest"))
         {
             onNest = true;
-            nest = other.gameObject.GetComponent<NestScript>();
+            //nest = other.gameObject.GetComponent<NestScript>();
             //currentFullness -= 20;
             //bar.SetValue(currentFullness);
             //other.gameObject.GetComponent<NestScript>().Feed();
@@ -130,20 +109,6 @@ public class PlayerRat : MonoBehaviour
             onNest = false; holeAnim = null;
         }
     }
-    //private void OnTriggerStay2D(Collider2D other)
-    //{
-    //    if (other.CompareTag("Nest"))
-    //    {
-    //        Debug.Log("bef");
-    //        if (Input.GetKeyDown(KeyCode.F))
-    //        {
-    //            Debug.Log("f");
-    //            currentFullness -= 20;
-    //            bar.SetValue(currentFullness);
-    //            other.gameObject.GetComponent<NestScript>().Feed();
-    //        }
-    //    }
-    //}
 
     IEnumerator Hunger()
     {

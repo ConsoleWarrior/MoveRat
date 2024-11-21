@@ -33,18 +33,18 @@ public class NestScript : MonoBehaviour
         //if (player.activeSelf && Input.GetKeyDown(KeyCode.E))
         //{ player.SetActive(false); }
     }
-    void OnGUI()
-    {
-        if (Event.current.Equals(Event.KeyboardEvent("e")))
-        {
+    //void OnGUI()
+    //{
+    //    if (Event.current.Equals(Event.KeyboardEvent("e")))
+    //    {
 
-            if (!player.activeSelf)
-            {
-                player.SetActive(true);
-                Debug.Log("E nest exit");
-            }
-        }
-    }
+    //        if (!player.activeSelf)
+    //        {
+    //            player.SetActive(true);
+    //            Debug.Log("E nest exit");
+    //        }
+    //    }
+    //}
     IEnumerator Hunger()
     {
         while (true)

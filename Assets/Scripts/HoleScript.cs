@@ -5,45 +5,22 @@ using UnityEngine;
 public class HoleScript : MonoBehaviour
 {
     private Animator animator;
-    public GameObject player;
-    public GameObject clue;
+    [SerializeField] public GameObject player;
+    [SerializeField] public GameObject clue;
+    [SerializeField] public Controller controller;
 
 
     void Start()
     {
         animator = GetComponent<Animator>();
+        controller.areas.Add(transform.GetChild(0).gameObject);
     }
 
     void Update()
     {
-        //if (player.activeSelf)
-        //{
-        //    animator.SetBool("Full", true);
-        //    //player.SetActive(false);
-        //}
-        //if (!player.activeSelf && Input.GetKeyDown(KeyCode.E))
-        //{
-        //    animator.SetBool("Full", false);
-        //    player.SetActive(true);
-        //}
+
     }
-    void OnGUI()
-    {
-        if (Event.current.Equals(Event.KeyboardEvent("e")))
-        {
-            //if (player.activeSelf)
-            //{
-            //    animator.SetBool("Full", true);
-            //    Debug.Log("E hole enter");
-            //}
-            if (!player.activeSelf)
-            {
-                player.SetActive(true);
-                animator.SetBool("Full", false);
-                Debug.Log("E hole exit");
-            }
-        }
-    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
