@@ -29,18 +29,17 @@ public class NestScript : MonoBehaviour
             player.SetActive(false);
             StopAllCoroutines();
         }
-
-        //if (!player.activeSelf && Input.GetKeyDown(KeyCode.E))
-        //{ player.SetActive(true); }
-        //if (player.activeSelf && Input.GetKeyDown(KeyCode.E))
-        //{ player.SetActive(false); }
     }
+
     void OnMouseDown()
     {
         if (!player.activeSelf)
         {
             controller.holeAnim.SetBool("Full", false);
-            player.transform.position = transform.position;
+            //player.transform.position = transform.position;
+            controller.direction = transform.position;
+            controller.isMove = true;
+            controller.holeAnim = GetComponent<Animator>();
         }
     }
     IEnumerator Hunger()
@@ -79,7 +78,7 @@ public class NestScript : MonoBehaviour
     }
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && clue != null)
         {
             clue.SetActive(false);
         }

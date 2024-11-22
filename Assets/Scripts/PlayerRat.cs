@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerRat : MonoBehaviour
 {
     //private Rigidbody2D rb;
-
     private Animator animator;
     private Vector2 moveDirection;
     public bool onNest = false;
@@ -28,9 +27,7 @@ public class PlayerRat : MonoBehaviour
 
     void Start()
     {
-        //rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-
         bar.SetMaxValue(maxFullness);
     }
     void OnEnable()
@@ -41,7 +38,7 @@ public class PlayerRat : MonoBehaviour
     }
     void OnDisable()
     {
-        dubler.CopyAndRun();
+        if (dubler != null) dubler.CopyAndRun();
     }
 
     void Update()
@@ -73,7 +70,6 @@ public class PlayerRat : MonoBehaviour
         {
             var xMove = moveDirection.x * currentSpeed * Time.deltaTime;
             var xMoveVertical = moveDirection.y * currentSpeed * Time.deltaTime;
-
             if (xMoveVertical != 0 && xMove != 0)
                 this.transform.Translate(new Vector3(xMove, xMoveVertical) * 0.75f, Space.World);
             else
@@ -86,23 +82,20 @@ public class PlayerRat : MonoBehaviour
     {
         if (other.CompareTag("Food"))
         {
-            currentFullness += 25;
+            currentFullness += other.gameObject.GetComponent<FoodScript>().nutritiousness;
             if (currentFullness > 100)
                 currentFullness = maxFullness;
             bar.SetValue(currentFullness);
             other.gameObject.SetActive(false);
         }
-        if (other.CompareTag("Nest"))
-        {
-            onNest = true;
-        }
-        if (other.CompareTag("Hole"))
+        if (other.CompareTag("Nest") || other.CompareTag("Hole"))
         {
             onNest = true;
             holeAnim = other.gameObject.GetComponent<Animator>();
         }
         if (other.CompareTag("Area"))
         {
+            Debug.Log("area trigger");
             onArea = true;
         }
     }
@@ -115,6 +108,13 @@ public class PlayerRat : MonoBehaviour
         if (other.CompareTag("Area"))
         {
             onArea = false;
+        }
+    }
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.CompareTag("Area"))
+        {
+            onArea = true;
         }
     }
 
