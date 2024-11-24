@@ -15,7 +15,7 @@ public class Controller : MonoBehaviour
     public Dubler dubler;
     public bool isMove = false;
     public Vector3 direction;
-    public BarScript bar;
+    public BarScript timeBar;
     private Vector3 newHoleDirection;
 
     void Start()
@@ -30,10 +30,10 @@ public class Controller : MonoBehaviour
             isMove = false;
             holeAnim.SetBool("Full", true);
         }
-        if(player.transform.position != newHoleDirection)
+        if(player.transform.position != newHoleDirection && !playerScript.coroutineIsWork)
         {
             StopAllCoroutines();
-            bar.SetValue(0);
+            timeBar.SetValue(0);
         }
     }
 
@@ -109,17 +109,6 @@ public class Controller : MonoBehaviour
             {
                 newHoleDirection = player.transform.position;
                 StartCoroutine(WaitForBuild());
-                //pausa na bar
-                //foreach (Transform hole in holes.transform)
-                //{
-                //    if (!hole.gameObject.activeSelf)
-                //    {
-                //        hole.position = player.transform.position;
-                //        hole.gameObject.SetActive(true);
-                //        hole.GetChild(0).gameObject.SetActive(true);
-                //        break;
-                //    }
-                //}
                 //Instantiate(Resources.Load("Hole"), player.transform.position, Quaternion.identity);
             }
         }
@@ -127,14 +116,14 @@ public class Controller : MonoBehaviour
     }
     IEnumerator WaitForBuild()
     {
-        Debug.Log("Hello!");
-        bar.SetMaxValue(30);
-        for (int i = 0; i < 30; i++)
+        Debug.Log("build..");
+        timeBar.SetMaxValue(50);
+        for (int i = 0; i < 50; i++)
         {
-            bar.SetValue(i);
+            timeBar.SetValue(i);
             yield return new WaitForSeconds(0.1f);
         }
-        bar.SetValue(0);
+        timeBar.SetValue(0);
         foreach (Transform hole in holes.transform)
         {
             if (!hole.gameObject.activeSelf)
@@ -145,7 +134,7 @@ public class Controller : MonoBehaviour
                 break;
             }
         }
-        Debug.Log("by!");
+        Debug.Log("ready");
     }
 
 }

@@ -9,7 +9,8 @@ public class PlayerRat : MonoBehaviour
     private Vector2 moveDirection;
     public bool onNest = false;
     public bool onArea = false;
-
+    public bool coroutineIsWork = false;
+    private Coroutine coroutine;
 
     [SerializeField] private float currentSpeed;
     [SerializeField] private float sprintSpeed;
@@ -21,9 +22,11 @@ public class PlayerRat : MonoBehaviour
 
     public GameObject gameOverTitle;
     public BarScript bar;
+    public BarScript timeBar;
     public NestScript nest;
     public Animator holeAnim;
     public Dubler dubler;
+
 
     void Start()
     {
@@ -68,6 +71,11 @@ public class PlayerRat : MonoBehaviour
     {
         if (moveDirection != Vector2.zero)
         {
+            if (coroutineIsWork && coroutine !=null)
+            {
+                StopCoroutine(coroutine);
+                coroutineIsWork = false;
+            }
             var xMove = moveDirection.x * currentSpeed * Time.deltaTime;
             var xMoveVertical = moveDirection.y * currentSpeed * Time.deltaTime;
             if (xMoveVertical != 0 && xMove != 0)
@@ -80,14 +88,15 @@ public class PlayerRat : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Food"))
-        {
-            currentFullness += other.gameObject.GetComponent<FoodScript>().nutritiousness;
-            if (currentFullness > 100)
-                currentFullness = maxFullness;
-            bar.SetValue(currentFullness);
-            other.gameObject.SetActive(false);
-        }
+        //if (other.CompareTag("Food"))
+        //{
+        //    //currentFullness += other.gameObject.GetComponent<FoodScript>().nutritiousness;
+        //    //if (currentFullness > 100)
+        //    //    currentFullness = maxFullness;
+        //    //bar.SetValue(currentFullness);
+        //    //other.gameObject.SetActive(false);
+        //    StartCoroutine(WaitForEat(other));
+        //}
         if (other.CompareTag("Nest") || other.CompareTag("Hole"))
         {
             onNest = true;
@@ -98,6 +107,36 @@ public class PlayerRat : MonoBehaviour
             Debug.Log("area trigger");
             onArea = true;
         }
+    }
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.CompareTag("Food") && !coroutineIsWork)
+        {
+            coroutine = StartCoroutine(WaitForEat(other));
+            coroutineIsWork = true;
+        }
+        if (other.CompareTag("Area"))
+        {
+            onArea = true;
+        }
+    }
+    IEnumerator WaitForEat(Collider2D other)
+    {
+        Debug.Log("start eat!");
+        timeBar.SetMaxValue(25);
+        for (int i = 0; i < 25; i++)
+        {
+            timeBar.SetValue(i);
+            yield return new WaitForSeconds(0.1f);
+        }
+        timeBar.SetValue(0);
+        currentFullness += other.gameObject.GetComponent<FoodScript>().nutritiousness;
+        if (currentFullness > 100)
+            currentFullness = maxFullness;
+        bar.SetValue(currentFullness);
+        other.gameObject.SetActive(false);
+        coroutineIsWork = false;
+        Debug.Log("good!");
     }
     private void OnTriggerExit2D(Collider2D other)
     {
@@ -110,13 +149,13 @@ public class PlayerRat : MonoBehaviour
             onArea = false;
         }
     }
-    private void OnTriggerStay2D(Collider2D other)
-    {
-        if (other.CompareTag("Area"))
-        {
-            onArea = true;
-        }
-    }
+    //private void OnTriggerStay2D(Collider2D other)
+    //{
+    //    if (other.CompareTag("Area"))
+    //    {
+    //        onArea = true;
+    //    }
+    //}
 
     IEnumerator HungerCoro()
     {

@@ -24,14 +24,10 @@ public class HoleScript : MonoBehaviour
     {
         if (!player.activeSelf)
         {
-            
             controller.holeAnim.SetBool("Full", false);
-            //player.transform.position = transform.position;
             controller.direction = transform.position;
             controller.isMove = true;
-
             controller.holeAnim = animator;
-            //animator.SetBool("Full", true);
         }
     }
     private void OnTriggerEnter2D(Collider2D other)

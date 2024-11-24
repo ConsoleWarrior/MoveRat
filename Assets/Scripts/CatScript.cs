@@ -11,6 +11,7 @@ public class CatScript : MonoBehaviour
     [SerializeField] private float sprintSpeed;
     [SerializeField] private float walkSpeed;
     [SerializeField] private float maxRange;
+    private SpriteRenderer spriteRenderer;
     private Vector2 moveDirection;
     private Vector2 randomDirection;
 
@@ -26,6 +27,7 @@ public class CatScript : MonoBehaviour
     void Start()
     {
         //rb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         StartCoroutine(Hunt());
     }
 
@@ -38,11 +40,13 @@ public class CatScript : MonoBehaviour
     {
         if (moveDirection.sqrMagnitude < maxRange * maxRange && player.activeSelf)
         {
+            spriteRenderer.color = Color.red;
             currentSpeed = sprintSpeed;
             transform.position = Vector2.MoveTowards(transform.position, player.transform.position, currentSpeed * Time.deltaTime);
         }
         else
         {
+            spriteRenderer.color = Color.white;
             currentSpeed = walkSpeed;
             transform.position = Vector2.MoveTowards(transform.position, randomDirection, currentSpeed * Time.deltaTime);
         }
