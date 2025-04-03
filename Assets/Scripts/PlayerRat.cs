@@ -26,6 +26,7 @@ public class PlayerRat : MonoBehaviour
     public NestScript nest;
     public Animator holeAnim;
     public Dubler dubler;
+    public AudioManager audioManager;
 
 
     void Start()
@@ -123,6 +124,7 @@ public class PlayerRat : MonoBehaviour
     IEnumerator WaitForEat(Collider2D other)
     {
         Debug.Log("start eat!");
+        audioManager.SoundPlay1();
         timeBar.SetMaxValue(25);
         for (int i = 0; i < 25; i++)
         {
